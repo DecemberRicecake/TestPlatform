@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block title %}接口列表{% endblock %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="tpl-content-wrapper">
+        <div class="tpl-portlet-components">
+                <div class="portlet-title">
+                    <div class="caption font-green bold">
+                        <span>接口列表</span>
+                    </div>
+                </div>
+                <div class="tpl-block">
+                    <div class="am-g">
+                        <div class="am-u-sm-12 am-u-md-6">
+                            <div class="am-btn-toolbar">
+                                <div class="am-btn-group am-btn-group-xs">
+                                    <button type="button" class="am-btn am-btn-default am-btn-success" onclick="new_page()">
+                                        <span class="am-icon-plus"></span> 新增
+                                    </button>
+{#                                    <button type="button" class="am-btn am-btn-default am-btn-danger">#}
+{#                                        <span class="am-icon-trash-o"></span> 删除#}
+{#                                    </button>#}
+                                </div>
+                            </div>
+                        </div>
+{#                        <div class="am-u-sm-12 am-u-md-3">#}
+{#                            <div class="am-form-group">#}
+{#                                <select data-am-selected="{btnSize: 'sm'}">#}
+{#                                    <option value="option1">所有类别</option>#}
+{#                                    <option value="option2">首页</option>#}
+{#                                    <option value="option3">抢单</option>#}
+{#                                    <option value="option4">跟单</option>#}
+{#                                    <option value="option5">我的</option>#}
+{#                                </select>#}
+{#                            </div>#}
+{#                        </div>#}
+                        <div class="am-u-sm-12 am-u-md-3">
+                            <div class="am-input-group am-input-group-sm">
+
+                                <input id="search_txt" type="text" class="am-form-field" placeholder="可模糊搜索接口名字">
+
+                                <span class="am-input-group-btn">
+                                    <button onclick="search_api()" class="am-btn  am-btn-default am-btn-success tpl-am-btn-success am-icon-search" type="button"></button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="am-g">
+                        <div class="am-u-sm-12">
+                                <table id="api_list" class="am-table am-table-striped am-table-hover table-main">
+                                    <thead>
+                                        <tr>
+{#                                            <th class="table-check"><input type="checkbox" class="tpl-table-fz-check"></th>#}
+                                            <th class="table-id">ID</th>
+                                            <th>接口名字</th>
+                                            <th>接口Url</th>
+                                            <th>请求方式</th>
+                                            <th>所属项目</th>
+                                            <th>环境代理</th>
+                                            <th class="table-date am-hide-sm-only">创建时间</th>
+                                            <th class="table-set">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                                <div class="am-cf">
+
+                                    <div class="am-fr">
+                                        <ul class="am-pagination tpl-pagination">
+                                            <li class="am-disabled"><a href="#">«</a></li>
+                                            <li class="am-active"><a href="#">1</a></li>
+                                            <li><a href="#">2</a></li>
+                                            <li><a href="#">3</a></li>
+                                            <li><a href="#">4</a></li>
+                                            <li><a href="#">5</a></li>
+                                            <li><a href="#">»</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <hr>
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="tpl-alert"></div>
+            </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        $(function() {
+            var a_url = "/api/apis/";
+            var a_type = "GET";
+            var a_data = {}
+            Action(a_url, a_data, a_type);
+        });
+
+        function search_api() {
+            var search_txt = $("#search_txt").val();
+            var a_url = "/api/?search="+search_txt;
+            var a_type = "GET";
+            var a_data = {}
+            Action(a_url, a_data, a_type);
+        }
+
+        function Action(a_url, a_data, a_type) {
+            $.ajax({
+                type: a_type,//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                contentType: 'application/json',
+                url: a_url,
+                data: JSON.stringify(a_data),
+                success: function (result) {
+                    console.log(result);
+                    refreshData(result);//刷新表格数据
+                },
+                error : function() {
+                    alert("异常！");
+                }
+            });
+        }
+
+        function refreshData(data) {
+            $("#api_list tbody").html("");//清除老数据
+            var tableStr = "";
+            var len = data.length;
+            for (var i = 0; i < len; i++) {
+                tableStr = tableStr
+                        + '<tr><td>' + data[i].id + '</td>'
+                        + '<td>' + data[i].apiName + '</td>'
+                        + '<td>' + data[i].url + '</td>'
+                        + '<td>' + data[i].method + '</td>'
+                        + '<td>' + data[i].project.projectName + '</td>'
+                        + '<td>' + data[i].env.Name + '</td>'
+                        + '<td>' + data[i].createTime.replace(/T/g,' ').substr(0,19) + '</td>'
+                        + '<td><div class="am-btn-toolbar"><div class="am-btn-group am-btn-group-xs">'
+                        + '<button disabled="disabled" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</button>'
+                        + '<button disabled="disabled" class="am-btn am-btn-default am-btn-xs am-hide-sm-only"><span class="am-icon-copy"></span> 复制</button>'
+                        + '<button onclick="delete_api('+ data[i].id +')" class="am-btn am-btn-default am-btn-xs am-text-danger am-hide-sm-only"><span class="am-icon-trash-o"></span> 删除</button>'
+                        + '</div></div></td></tr>';
+            }
+            $("#api_list tbody").html(tableStr);
+        }
+
+        function delete_api(api_id) {
+            var a_url = "/api/"+api_id+"/";
+            var a_type = "DELETE";
+            var a_data = {}
+            Action(a_url, a_data, a_type);
+        }
+
+        function new_page() {
+            $.ajax(window.location.href="/add_api/");
+        }
+    </script>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}请求详情{% endblock %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="tpl-content-wrapper">
+            <div class="tpl-portlet-components">
+                <div class="portlet-title">
+                    <div class="caption font-green bold">
+                        <span>请求详情</span>
+                    </div>
+                </div>
+                <div style="height:500px;width:700px;float:left;margin-left:40px;">
+                    <pre id="json1"></pre>
+                </div>
+
+                <div style="height:500px;width:700px;float:left;margin-left:80px;">
+                    <pre id="json2"></pre>
+                </div>
+                <div class="tpl-alert"></div>
+            </div>
+        </div>
+{% endblock %}
+
+{% block json %}
+    <script>
+    $(function(){
+        input1 = {{ test_case.questData|safe }};
+        input2 = {{ test_case.responses|safe }};
+        var options = {
+          collapsed: false,
+          withQuotes: true
+        };
+        $('#json1').jsonViewer(input1, options);
+        $('#json2').jsonViewer(input2, options);
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block title %}测试报告{% endblock %}
+{% load staticfiles %}
+
+
+{% block content %}
+    <div class="tpl-content-wrapper">
+        <div class="tpl-portlet-components">
+            <div class="portlet-title">
+                <div class="caption font-green bold">
+                    <span>测试报告</span>
+                </div>
+            </div>
+            <div class="container-fluid" id="report">
+              <div class="row">
+                <div class="col-md-9 col-md-offset-0">
+                  <table id="summary" class="stats-table">
+                    <thead>
+                        <tr class="header dont-sort">
+                            <th></th>
+                            <th colspan="4">接口</th>
+                            <th colspan="1">任务</th>
+                        </tr>
+                      <tr>
+                          <th>任务名称</th>
+                          <th class="passed">Passed</th>
+                          <th class="failed">Failed</th>
+                          <th class="skipped">Skipped</th>
+                          <th class="total">Total</th>
+                          <th>总耗时</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="container-fluid" id="report">
+              <div class="row">
+                <div class="col-md-9 col-md-offset-0">
+                  <div id="elements" class="elements">
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block js %}
+
+<script>
+    $(function() {
+        var regexp = "[0-9]+";
+        var url = window.location.pathname;
+        var url_taskid = url.match(regexp);
+        get_report(parseInt(url_taskid));
+    });
+
+    function get_report(taskid) {
+        var post_url = "{% url 'api:api_get_report' %}";
+        var post_data = {"taskid": taskid};
+        postAction(post_url, post_data);
+    }
+
+    function postAction(post_url, post_data) {
+        $.ajax({
+            type: "POST",//方法类型
+            dataType: "json",//预期服务器返回的数据类型
+            url: post_url,
+            data: JSON.stringify(post_data),
+            success: function (result) {
+                console.log(result);
+                if(result.status != 200){
+                    alert(result.message);
+                }
+                refreshData(result.datas);//刷新表格数据
+            },
+            error : function() {
+                alert("提交异常！");
+            }
+        });
+    }
+
+    function refreshData(data) {
+        var tableStr = '<tr><td class="tagname" style="text-align: center;">'+ data.task_name +'</td>'
+                + '<td class="passed">'+ data.num.Passed +'</td>'
+                + '<td class="failed">'+ data.num.Failed +'</td>'
+                + '<td class="skipped">'+ data.num.Skipped +'</td>'
+                + '<td class="total">'+ data.num.Total +'</td>'
+                + '<td class="duration" style="text-align: center;">2m 27s 418ms</td>'
+                + '</tr>';
+        $("#summary tbody").html(tableStr);
+
+
+        var translationTable = { '0': 'failed', '1': 'passed', '2': 'skipped'};
+        var totalcount = 0;
+        var Str = "";
+        var len = data.case_detail.length;
+        for (var i = 0; i < len; i++) {
+            Str = Str +'<div class="element">'+
+                            '<span class="lead-duration duration">23s 872ms</span>'+
+                            '<span data-toggle="collapse" class="collapsable-control collapsed" data-target="#element-'+ (i+1).toString() +'" aria-expanded="false">'+
+                                '<div class="brief '+ translationTable[data.case_detail[i].result] +'">'+
+                                    '<span class="keyword indention">用例 </span>'+
+                                    '<span class="name">'+ data.case_detail[i].name +'</span>'+
+                                    '<i class="chevron fa fa-fw"></i>'+
+                                '</div>'+
+                            '</span>'+
+                            '<div class="description indention"></div>'+
+                            '<div id="element-'+ (i+1).toString() +'" class="collapse collapsable-details" aria-expanded="false" style="height: 0px;">'+
+                            '</div>'+
+                        '</div>'
+            }
+        $("#elements").html(Str);
+
+        var options = {
+          collapsed: false,
+          withQuotes: true
+        };
+
+        var apishuju;
+        for (var i = 0; i < len; i++) {
+            var Str = "";
+            var len2 = data.api_detail['case'+(i+1).toString()].length;
+            for (var j = 0; j < len2; j++){
+                apishuju = data.api_detail['case'+(i+1).toString()][j]
+                totalcount += 1;
+                Str = '<div class="steps inner-level">'+
+                                    '<div data-toggle="collapse" class="collapsable-control collapsed" data-target="#steps-'+ totalcount.toString() +'" aria-expanded="false">'+
+                                        '<div class="brief '+ translationTable[apishuju.result] +'">'+
+                                            '<span class="keyword indention">接口 </span>'+
+                                            '<span class="name">'+ apishuju.apiName +'</span>'+
+                                            '<i class="chevron fa fa-fw"></i>'+
+                                            '<span class="lead-duration duration">039ms</span>'+
+                                        '</div>'+
+                                    '</div>'+
+                                    '<div id="steps-'+ totalcount.toString() +'" class="inner-level collapsable-details collapse" aria-expanded="false" style="height: 2px;">'+
+                                        '<div class="step">'+
+                                            '<div class="embeddings inner-level">'+
+                                                '<div class="collapse collapsable-details  in ">'+
+                                                    '<p>请求入参:</p>'+
+                                                    '<pre id="json1_'+ totalcount.toString() +'"></pre>'+
+                                                    '<br>'+
+                                                    '<p>请求响应:</p>'+
+                                                    '<pre id="json2_'+ totalcount.toString() +'"></pre>'+
+                                                '</div>'+
+                                            '</div>'+
+                                        '</div>'+
+                                    '</div>'+
+                                '</div>'
+                $("#element-"+(i+1).toString()).append(Str);
+                $('#json1_'+ totalcount.toString()).jsonViewer(apishuju.request, options);
+                $('#json2_'+ totalcount.toString()).jsonViewer(apishuju.response, options);
+            }
+        }
+    }
+
+</script>
+
+{% endblock %}
+
+

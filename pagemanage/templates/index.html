@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+{% block title %}首页{% endblock %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="tpl-content-wrapper">
+        <div class="tpl-content-scope">
+                <div class="note note-info">
+                    <h3>接口自动化平台
+                        <span class="close" data-close="note"></span>
+                    </h3>
+                    <p><span class="label label-danger">目标:</span> 提高测试效率，O(∩_∩)O~
+                    </p>
+                </div>
+            </div>
+
+        <div class="row">
+                <div class="am-u-lg-3 am-u-md-6 am-u-sm-12">
+                    <div class="dashboard-stat blue">
+                        <div class="visual">
+                            <i class="am-icon-star"></i>
+                        </div>
+                        <div class="details">
+                            <div id="api_num" class="number">--</div>
+                            <div class="desc"> 接口数量 </div>
+                        </div>
+                        <a class="more" href="#"> 查看更多
+                    <i class="m-icon-swapright m-icon-white"></i>
+                </a>
+                    </div>
+                </div>
+                <div class="am-u-lg-3 am-u-md-6 am-u-sm-12">
+                    <div class="dashboard-stat green">
+                        <div class="visual">
+                            <i class="am-icon-certificate"></i>
+                        </div>
+                        <div class="details">
+                            <div id="case_num" class="number">--</div>
+                            <div class="desc"> 用例数量 </div>
+                        </div>
+                        <a class="more" href="#"> 查看更多
+                    <i class="m-icon-swapright m-icon-white"></i>
+                </a>
+                    </div>
+                </div>
+                <div class="am-u-lg-3 am-u-md-6 am-u-sm-12">
+                    <div class="dashboard-stat red">
+                        <div class="visual">
+                            <i class="am-icon-square"></i>
+                        </div>
+                        <div class="details">
+                            <div id="task_num" class="number">--</div>
+                            <div class="desc"> 任务数量 </div>
+                        </div>
+                        <a class="more" href="#"> 查看更多
+                    <i class="m-icon-swapright m-icon-white"></i>
+                </a>
+                    </div>
+                </div>
+                <div class="am-u-lg-3 am-u-md-6 am-u-sm-12">
+                    <div class="dashboard-stat purple">
+                        <div class="visual">
+                            <i class="am-icon-heart"></i>
+                        </div>
+                        <div class="details">
+                            <div id="project_num" class="number">--</div>
+                            <div class="desc"> 项目数量 </div>
+                        </div>
+                        <a class="more" href="#"> 查看更多
+                    <i class="m-icon-swapright m-icon-white"></i>
+                </a>
+                    </div>
+                </div>
+
+
+
+            </div>
+
+        <div class="row">
+                <div class="am-u-md-6 am-u-sm-12 row-mb">
+                    <div class="tpl-portlet">
+                        <div class="tpl-portlet-title">
+                            <div class="tpl-caption font-green ">
+                                <i class="am-icon-bar-chart"></i>
+                                <span>统计</span>
+                            </div>
+                        </div>
+
+                        <!--此部分数据请在 js文件夹下中的 app.js 中的 “百度图表A” 处修改数据 插件使用的是 百度echarts-->
+{#                        <div class="tpl-echarts" id="tpl-echarts-A">#}
+{#                        </div>#}
+                        <div class="tpl-echarts" id="tpl-echarts">
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="am-u-md-6 am-u-sm-12 row-mb">
+                    <div class="tpl-portlet">
+                        <div class="tpl-portlet-title">
+                            <div class="tpl-caption font-green ">
+                                <i class="am-icon-bullhorn"></i>
+                                <span>消息</span>
+                            </div>
+
+                        </div>
+
+                        <div class="am-tabs tpl-index-tabs" data-am-tabs>
+                            <div class="am-tabs-bd">
+                                <div class="am-tab-panel am-fade am-in am-active">
+                                    <div class="wrapper">
+                                        <div class="scroller">
+                                            <ul class="tpl-task-list tpl-task-remind">
+
+                                                <li>
+                                                    <div class="cosB">
+                                                        12分钟前
+                                                    </div>
+                                                    <div class="cosA">
+                                                        <span class="cosIco">
+                                                            <i class="am-icon-bell-o"></i>
+                                                        </span>
+                                                        <span>
+                                                            定时任务A已完成，请查看测试报告。
+                                                        </span>
+                                                    </div>
+
+                                                </li>
+
+                                                <li>
+                                                    <div class="cosB">
+                                                        2小时前
+                                                    </div>
+                                                    <div class="cosA">
+                                                        <span class="cosIco label-danger">
+                                                            <i class="am-icon-bolt"></i>
+                                                        </span>
+                                                        <span>
+                                                            xxx模块出现异常！请尽快修复！
+                                                        </span>
+                                                    </div>
+                                                </li>
+
+                                                <li>
+                                                    <div class="cosB">
+                                                        1天前
+                                                    </div>
+                                                    <div class="cosA">
+                                                        <span class="cosIco label-warning">
+                                                            <i class="am-icon-plus"></i>
+                                                        </span>
+                                                        <span>
+                                                            jiajia新建接口：金豆支付。
+                                                        </span>
+                                                    </div>
+                                                </li>
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+    </div>
+{% endblock %}
+
+{% block echarts %}
+    <script src="{% static "/sign/js/echarts.min.js" %}"></script>
+{% endblock %}
+
+{% block js %}
+    <script>
+        $(function() {
+            get_index("");//初始化表格数据
+        });
+
+        function get_index(search_txt) {
+            var post_url = "{% url 'api:api_get_index' %}";
+            var post_data = {"search_txt": search_txt};
+            postAction(post_url, post_data);
+        }
+
+        function pageData(data){
+            var echartsT = echarts.init(document.getElementById('tpl-echarts'));
+            option = {
+                tooltip: {
+                    trigger: 'axis'
+                },
+                toolbox: {
+                    top: '0',
+                    feature: {
+                        dataView: { show: true, readOnly: false },
+                        magicType: { show: true, type: ['line', 'bar'] },
+                        restore: { show: true },
+                        saveAsImage: { show: true }
+                    }
+                },
+                legend: {
+                    data: ['任务', '接口', '用例']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis: [{
+                    type: 'category',
+                    data: data['date_detail']
+                }],
+                yAxis: [{
+                    type: 'value',
+                    name: '数量',
+                    min: 0,
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                }],
+                series: [
+                    {
+                        name: '任务',
+                        type: 'line',
+                        data: data['task_detail']
+                    },
+                    {
+                        name: '接口',
+                        type: 'line',
+                        data: data['api_detail']
+                    },
+                    {
+                        name: '用例',
+                        type: 'line',
+                        data: data['case_detail']
+                    }
+                ]
+            };
+            echartsT.setOption(option);
+        }
+
+        function postAction(post_url, post_data) {
+            $.ajax({
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                url: post_url,
+                data: JSON.stringify(post_data),
+                success: function (result) {
+                    console.log(result);
+                    refreshData(result.data['num']);//刷新表格数据
+                    pageData(result.data['detail']);
+                },
+                error : function() {
+                    alert("异常！");
+                }
+            });
+        }
+
+        function refreshData(data) {
+            for (var k in data){
+                $("#"+k).text(data[k]);
+            }
+        }
+
+    </script>
+
+{% endblock %}
+
+
+
+
+

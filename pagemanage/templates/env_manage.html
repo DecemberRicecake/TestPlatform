@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block title %}环境管理{% endblock %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="tpl-content-wrapper">
+        <div class="tpl-portlet-components">
+            <div class="portlet-title">
+                <div class="caption font-green bold">
+                    <span>环境管理</span>
+                </div>
+            </div>
+            <div class="am-u-sm-12 am-u-md-9">
+                <div id="toolbar" class="btn-group">
+                    <button id="btn_add" type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                        <span class="glyphicon glyphicon-plus"></span>新增代理
+                    </button>
+                </div>
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" style="margin-top:100px;">
+                        <div class="modal-content">
+                            <div class="modal-header" style="color: #32c5d2; font-size : 1.3em;">
+                                新增代理
+                            </div>
+                            <form class="form-horizontal" id="form_model">
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="inputName" class="col-sm-2 control-label">代理名称:</label>
+                                        <div class="col-sm-10">
+                                            <input id="inputName" type="text" class="form-control list-inline" placeholder="请输入代理名称"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputIP" class="col-sm-2 control-label">IP地址:</label>
+                                        <div class="col-sm-10">
+                                            <input id="inputIP" type="text" class="form-control list-inline" placeholder="请输入IP地址"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputPort" class="col-sm-2 control-label">端口号:</label>
+                                        <div class="col-sm-10">
+                                            <input id="inputPort" type="text" class="form-control list-inline" placeholder="请输入端口号"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="add_env()">提交</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <table id="table"></table>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+{% endblock %}
+
+{% block js %}
+
+    <script>
+        $.fn.editable.defaults.mode = 'inline';
+
+        $(function() {
+            //初始化弹出框中历史数据
+            $("#table").bootstrapTable({
+                url: "/api/environment/",
+                toolbar: "#toolbar",
+                editable: true,
+                idField: "Id",
+                pagination: true,
+                showRefresh: true,
+                search: true,
+                clickToSelect: true,
+                columns: [{
+                    field: "id",
+                    title: "ID",
+                    visible: false
+                }, {
+                    field: "Name",
+                    title: "环境名称",
+                    editable: {
+                        type: 'text',
+                        title: '环境名称',
+                        validate: function (v) {
+                            if (!v) return '环境名称不能为空';
+                        }
+                    }
+                }, {
+                    field: "ip",
+                    title: "IP地址",
+                    editable: {
+                        type: 'text',
+                        title: 'IP地址',
+                        validate: function (v) {
+                            if (!v) return 'IP地址不能为空';
+                        }
+                    }
+                }, {
+                    field: "port",
+                    title: "端口",
+                    editable: {
+                        type: 'text',
+                        title: '端口',
+                        validate: function (v) {
+                            if (!v) return '端口不能为空';
+                        }
+                    }
+                }, {
+                    title: '操作',
+                    formatter: function (value, row){
+                        return ['<button class="btn btn-danger" type="button" onclick="deleteEnv(\'' + row.id + '\')" >删除</button>'
+                        ].join('');
+                    }
+                }],
+
+                onEditableSave: function (field, row) {
+                    var a_url = "/api/environment/"+row.id+"/";
+                    var a_type = "PATCH";
+                    var a_data = row;
+                    Action(a_url, a_data, a_type);
+                }
+            });
+        });
+
+        function add_env() {
+            var a_url = "/api/environment/";
+            var a_type = "POST";
+            var a_data = {
+                "Name": $("#inputName").val(),
+                "ip": $("#inputIP").val(),
+                "port": $("#inputPort").val()
+            };
+            Action(a_url, a_data, a_type);
+            document.getElementById("form_model").reset();
+        }
+
+        function deleteEnv(id) {
+            var a_url = "/api/environment/"+id+"/";
+            var a_type = "DELETE";
+            Action(a_url, {}, a_type);
+        }
+
+        function Action(a_url, a_data, a_type) {
+            $.ajax({
+                type: a_type,//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                contentType: 'application/json',
+                url: a_url,
+                data: JSON.stringify(a_data),
+                success: function (result) {
+                    console.log(result);
+                    refreshData();
+                },
+                error: function() {
+                    alert("异常！");
+                }
+            });
+        }
+
+        function refreshData() {
+            var opt = {
+                url: "/api/environment/",
+                silent: true,
+            };
+            $("#table").bootstrapTable('refresh',opt);
+        }
+    </script>
+
+{% endblock %}
+

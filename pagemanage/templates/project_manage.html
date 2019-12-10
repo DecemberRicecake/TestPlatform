@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block title %}项目管理{% endblock %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="tpl-content-wrapper">
+        <div class="tpl-portlet-components">
+            <div class="portlet-title">
+                <div class="caption font-green bold">
+                    <span>项目管理</span>
+                </div>
+            </div>
+            <div class="am-u-sm-12 am-u-md-9">
+                <div id="toolbar" class="btn-group">
+                    <button id="btn_add" type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+                        <span class="glyphicon glyphicon-plus"></span>新增项目
+                    </button>
+                </div>
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" style="margin-top:100px;">
+                        <div class="modal-content">
+                            <div class="modal-header" style="color: #32c5d2; font-size : 1.3em;">
+                                新增项目
+                            </div>
+                            <form class="form-horizontal" id="form_model">
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="inputName" class="col-sm-2 control-label">项目名称:</label>
+                                        <div class="col-sm-10">
+                                            <input id="inputName" type="text" class="form-control list-inline" placeholder="请输入项目名称"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputPeople" class="col-sm-2 control-label">负责人:</label>
+                                        <div class="col-sm-10">
+                                            <input id="inputPeople" type="text" class="form-control list-inline" placeholder="请输入负责人名字"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputDesc" class="col-sm-2 control-label">备注:</label>
+                                        <div class="col-sm-10">
+                                            <input id="inputDesc" type="text" class="form-control list-inline" placeholder="请输入备注"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="add_project()">提交</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <table id="table"></table>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    <script>
+        $.fn.editable.defaults.mode = 'inline';
+
+        $(function () {
+            $("#table").bootstrapTable({
+                url: "/api/project/",
+                toolbar: "#toolbar",
+                editable: true,
+                idField: "Id",
+                pagination: true,
+                showRefresh: true,
+                search: true,
+                clickToSelect: true,
+                columns: [{
+                    field: "id",
+                    title: "ID",
+                    visible: false
+                }, {
+                    field: "projectName",
+                    title: "项目名称",
+                    editable: {
+                        type: 'text',
+                        title: '项目名称',
+                        validate: function (v) {
+                            if (!v) return '项目名称不能为空';
+                        }
+                    }
+                }, {
+                    field: "people",
+                    title: "负责人",
+                    editable: {
+                        type: 'text',
+                        title: '负责人',
+                        validate: function (v) {
+                            if (!v) return '负责人不能为空';
+                        }
+                    }
+                }, {
+                    field: "description",
+                    title: "备注",
+                    editable: {
+                        type: 'text',
+                        title: '备注',
+                    }
+                }, {
+                    title: '操作',
+                    formatter: function (value, row){
+                        return ['<button class="btn btn-danger" type="button" onclick="deleteProject(\'' + row.id + '\')" >删除</button>'
+                        ].join('');
+                    }
+                }],
+
+                onEditableSave: function (field, row) {
+                    var a_url = "/api/project/"+row.id+"/";
+                    var a_type = "PATCH";
+                    var a_data = row;
+                    Action(a_url, a_data, a_type);
+
+                }
+            });
+        });
+
+        function add_project() {
+            var a_url = "/api/project/";
+            var a_type = "POST";
+            var a_data = {
+                "projectName": $("#inputName").val(),
+                "people": $("#inputPeople").val(),
+                "description": $("#inputDesc").val()
+            };
+            Action(a_url, a_data, a_type);
+            document.getElementById("form_model").reset();
+        }
+
+        function deleteProject(id) {
+            var a_url = "/api/project/"+id+"/";
+            var a_type = "DELETE";
+            Action(a_url, {}, a_type);
+        }
+
+        function Action(a_url, a_data, a_type) {
+            $.ajax({
+                type: a_type,//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                contentType: 'application/json',
+                url: a_url,
+                data: JSON.stringify(a_data),
+                success: function (result) {
+                    console.log(result);
+                    refreshData();
+                },
+                error: function() {
+                    alert("异常！");
+                }
+            });
+        }
+
+        function refreshData() {
+            var opt = {
+                url: "/api/project/",
+                silent: true,
+            };
+            $("#table").bootstrapTable('refresh',opt);
+        }
+
+    </script>
+{% endblock %}
+

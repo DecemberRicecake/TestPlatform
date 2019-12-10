@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="zh">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    {% load staticfiles %}
+    {% block json %}{% endblock %}
+    {% block echarts %}{% endblock %}
+    <link rel="icon" type="image/png" href="{% static "/sign/i/favicon.ico" %}">
+    <link rel="stylesheet" href="{% static "/sign/css/amazeui.min.css" %}">
+    <link rel="stylesheet" href="{% static "/sign/css/admin.css" %}">
+    <link rel="stylesheet" href="{% static "/sign/css/app.css" %}">
+    <link rel="stylesheet" href="{% static "/sign/css/new.css" %}">
+    <link rel="stylesheet" href="{% static "/sign/css/jquery.json-viewer.css" %}">
+    <link rel="stylesheet" href="{% static "/sign/css/bootstrap.css" %}">
+    <link rel="stylesheet" href="{% static "/sign/css/bootstrap-table.css" %}">
+    <link rel="stylesheet" href="{% static "/sign/css/bootstrap-editable.css" %}">
+    <link rel="stylesheet" href="{% static "/sign/css/bootstrap-datetimepicker.css" %}">
+    <link rel="stylesheet" href="{% static "/sign/css/cucumber.css" %}">
+    <link rel="stylesheet" href="{% static "/sign/css/font-awesome.min.css" %}">
+</head>
+
+<body>
+
+    <header class="am-topbar am-topbar-inverse admin-header">
+            <div class="am-topbar-brand">
+                <span>接口测试平台</span>
+            </div>
+            <div class="am-icon-list tpl-header-nav-hover-ico am-fl am-margin-right">
+            </div>
+
+            <button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-success am-show-sm-only" data-am-collapse="{target: '#topbar-collapse'}"><span class="am-sr-only">导航切换</span> <span class="am-icon-bars"></span></button>
+
+            <div class="am-collapse am-topbar-collapse" id="topbar-collapse">
+
+                <ul class="am-nav am-nav-pills am-topbar-nav am-topbar-right admin-header-list tpl-header-list">
+                    <li class="am-dropdown" data-am-dropdown data-am-dropdown-toggle>
+                        <a class="am-dropdown-toggle tpl-header-list-link" href="javascript:;">
+                            <span class="am-icon-exclamation-circle"></span> 异常 <span class="am-badge tpl-badge-danger am-round">2</span></span>
+                        </a>
+                        <ul class="am-dropdown-content tpl-dropdown-content">
+                            <li class="tpl-dropdown-content-external">
+                                <h3>你有 <span class="tpl-color-danger">2</span> 条异常</h3><a href="###">全部</a></li>
+                            <li class="tpl-dropdown-list-bdbc"><a href="#" class="tpl-dropdown-list-fl"> [融管家]购买接口异常</a>
+                                <span class="tpl-dropdown-list-fr">3小时前</span>
+                            </li>
+                            <li class="tpl-dropdown-list-bdbc"><a href="#" class="tpl-dropdown-list-fl"> [CS]认证接口异常</a>
+                                <span class="tpl-dropdown-list-fr">2分钟前</span>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="am-dropdown" data-am-dropdown data-am-dropdown-toggle>
+                        <a class="am-dropdown-toggle tpl-header-list-link" href="javascript:;">
+                            <span class="am-icon-calendar"></span> 进度 <span class="am-badge tpl-badge-primary am-round">3</span></span>
+                        </a>
+                        <ul class="am-dropdown-content tpl-dropdown-content">
+                            <li class="tpl-dropdown-content-external">
+                                <h3>你有 <span class="tpl-color-primary">3</span> 个任务进度</h3><a href="###">全部</a></li>
+                            <li>
+                                <a href="javascript:;" class="tpl-dropdown-content-progress">
+                                    <span class="task">
+                            <span class="desc">UI自动化</span>
+                                    <span class="percent">45%</span>
+                                    </span>
+                                    <span class="progress">
+                            <div class="am-progress tpl-progress am-progress-striped"><div class="am-progress-bar am-progress-bar-success" style="width:45%"></div></div>
+                        </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:;" class="tpl-dropdown-content-progress">
+                                    <span class="task">
+                            <span class="desc">融管家接口自动化 </span>
+                                    <span class="percent">30%</span>
+                                    </span>
+                                    <span class="progress">
+                           <div class="am-progress tpl-progress am-progress-striped"><div class="am-progress-bar am-progress-bar-secondary" style="width:30%"></div></div>
+                        </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:;" class="tpl-dropdown-content-progress">
+                                    <span class="task">
+                            <span class="desc">CS接口自动化 </span>
+                                    <span class="percent">60%</span>
+                                    </span>
+                                    <span class="progress">
+                            <div class="am-progress tpl-progress am-progress-striped"><div class="am-progress-bar am-progress-bar-warning" style="width:60%"></div></div>
+                        </span>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li class="am-hide-sm-only"><a href="javascript:;" id="admin-fullscreen" class="tpl-header-list-link"><span class="am-icon-arrows-alt"></span> <span class="admin-fullText">开启全屏</span></a></li>
+
+                    <li class="am-dropdown" data-am-dropdown data-am-dropdown-toggle>
+                        <a class="am-dropdown-toggle tpl-header-list-link" href="javascript:;">
+                            <span class="tpl-header-list-user-nick">施佳佳</span>
+                        </a>
+                        <ul class="am-dropdown-content">
+                            <li><a href="#"><span class="am-icon-align-justify"></span> 资料</a></li>
+                            <li><a href="#"><span class="am-icon-cog"></span> 设置</a></li>
+                            <li><a href="#"><span class="am-icon-power-off"></span> 退出</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+    </header>
+
+    <div class="tpl-page-container">
+
+        <div class="tpl-left-nav tpl-left-nav-hover">
+            <div class="tpl-left-nav-list">
+                <ul class="tpl-left-nav-menu">
+                    <li class="tpl-left-nav-item">
+                        <a id="indexname" href="/index/" class="nav-link">
+                            <i class="am-icon-home"></i>
+                            <span>首页</span>
+                        </a>
+                    </li>
+
+
+                    <li class="tpl-left-nav-item">
+                        <a id="settingname_a" href="javascript:;" class="nav-link tpl-left-nav-link-list">
+                            <i class="am-icon-cog"></i>
+                            <span>配置</span>
+                            <i id="settingname_i" class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right"></i>
+                        </a>
+                        <ul id="settingname_ul" class="tpl-left-nav-sub-menu">
+                            <li>
+                                <a id="settingname_1" href="/env_manage/">
+                                    <i class="am-icon-angle-right"></i>
+                                    <span>环境管理</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a id="settingname_2" href="/project_manage/">
+                                    <i class="am-icon-angle-right"></i>
+                                    <span>项目管理</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="tpl-left-nav-item">
+                        <a id="apiname_a" href="javascript:;" class="nav-link tpl-left-nav-link-list">
+                            <i class="am-icon-table"></i>
+                            <span>接口</span>
+                            <i id="apiname_i" class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right"></i>
+                        </a>
+                        <ul id="apiname_ul" class="tpl-left-nav-sub-menu">
+                            <li>
+                                <a id="apiname_1" href="/parameters/">
+                                    <i class="am-icon-angle-right"></i>
+                                    <span>自定义参数</span>
+                                </a>
+                                <a id="apiname_2" href="/api_list/">
+                                    <i class="am-icon-angle-right"></i>
+                                    <span>接口列表</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="tpl-left-nav-item">
+                        <a id="casename_a" href="javascript:;" class="nav-link tpl-left-nav-link-list">
+                            <i class="am-icon-wpforms"></i>
+                            <span>用例</span>
+                            <i id="casename_i" class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right"></i>
+                        </a>
+                        <ul id="casename_ul" class="tpl-left-nav-sub-menu">
+                            <li>
+                                <a id="casename_1" href="/case_list/">
+                                    <i class="am-icon-angle-right"></i>
+                                    <span>用例列表</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="tpl-left-nav-item">
+                        <a id="taskname_a" href="javascript:;" class="nav-link tpl-left-nav-link-list">
+                            <i class="am-icon-tasks"></i>
+                            <span>任务</span>
+                            <i id="taskname_i" class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right"></i>
+                        </a>
+                        <ul id="taskname_ul" class="tpl-left-nav-sub-menu">
+                            <li>
+                                <a id="taskname_1" href="/task_list/">
+                                    <i class="am-icon-angle-right"></i>
+                                    <span>任务列表</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="tpl-left-nav-item">
+                        <a href="javascript:;" class="nav-link tpl-left-nav-link-list">
+                            <i class="am-icon-user"></i>
+                            <span>权限</span>
+                            <i class="am-icon-angle-right tpl-left-nav-more-ico am-fr am-margin-right"></i>
+                        </a>
+                        <ul class="tpl-left-nav-sub-menu">
+                            <li>
+                                <a>
+                                    <i class="am-icon-angle-right"></i>
+                                    <span>(后续补充...)</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+
+                </ul>
+            </div>
+        </div>
+
+        {% block content %}{% endblock %}
+
+    </div>
+
+    <script src="{% static "/sign/js/jquery.min.js" %}"></script>
+    <script src="{% static "/sign/js/bootstrap.js" %}"></script>
+    <script src="{% static "/sign/js/bootstrap-editable.js" %}"></script>
+    <script src="{% static "/sign/js/bootstrap-table.js" %}"></script>
+    <script src="{% static "/sign/js/bootstrap-table-zh-CN.js" %}"></script>
+    <script src="{% static "/sign/js/bootstrap-table-editable.js" %}"></script>
+
+    <script src="{% static "/sign/js/amazeui.min.js" %}"></script>
+    <script src="{% static "/sign/js/app.js" %}"></script>
+    <script src="{% static "/sign/js/jquery.serializejson.min.js" %}"></script>
+    <script src="{% static "/sign/js/jsonfomatnew.js" %}"></script>
+    <script src="{% static "/sign/js/jquery.json-viewer.js" %}"></script>
+    <script src="{% static "/sign/js/bootstrap-datetimepicker.js" %}"></script>
+
+    {% block js %}{% endblock %}
+
+    <script>
+        $(function(){
+            var t=document.title;
+            var obj;
+            switch (t) {
+                case "首页":
+                    obj = document.getElementById('indexname');
+                    obj.className += ' active';
+                    break;
+                case "环境管理":
+                    change_ui('settingname', '1');
+                    break;
+                case "项目管理":
+                    change_ui('settingname', '2');
+                    break;
+                case "自定义参数":
+                    change_ui('apiname', '1');
+                    break;
+                case "接口列表":
+                    change_ui('apiname', '2');
+                    break;
+                case "新增接口":
+                    change_ui('apiname', '2');
+                    break;
+                case "用例列表":
+                    change_ui('casename', '1');
+                    break;
+                case "任务列表":
+                    change_ui('taskname', '1');
+                    break;
+            }
+        });
+        function change_ui(name, id) {
+            var obj;
+            obj = document.getElementById(name+'_a');
+            obj.className += ' active';
+            obj = document.getElementById(name+'_i');
+            obj.className += ' tpl-left-nav-more-ico-rotate';
+            obj = document.getElementById(name+'_ul');
+            obj.setAttribute('style','display: block;');
+            obj = document.getElementById(name+'_'+id);
+            obj.setAttribute('class','active');
+        }
+
+    </script>
+    {#   <script src="{% static "/sign/js/iscroll.js" %}"></script>#}
+
+</body>
+
+</html>
+
+
+
+
+
+

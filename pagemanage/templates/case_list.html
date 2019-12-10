@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+{% block title %}用例列表{% endblock %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="tpl-content-wrapper">
+        <div class="tpl-portlet-components">
+                <div class="portlet-title">
+                    <div class="caption font-green bold">
+                        <span>用例列表</span>
+                    </div>
+                </div>
+                <div class="am-u-sm-12 am-u-md-9">
+                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" style="margin-top:100px;">
+                            <div class="modal-content">
+                                <div class="modal-header" style="color: #32c5d2; font-size : 1.3em;">
+                                    新增用例
+                                </div>
+                                <form class="form-horizontal" id="form_model">
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <label for="inputName" class="col-sm-2 control-label">用例名称:</label>
+                                            <div class="col-sm-10">
+                                                <input id="inputName" type="text" class="form-control list-inline" placeholder="请输入用例名称"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="inputSetup" class="col-sm-2 control-label">执行步骤:</label>
+                                            <div class="col-sm-10">
+                                                <input id="inputSetup" type="text" class="form-control list-inline" placeholder="例：A接口id,B接口id,C接口id"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="inputDesc" class="col-sm-2 control-label">描述:</label>
+                                            <div class="col-sm-10">
+                                                <input id="inputDesc" type="text" class="form-control list-inline" placeholder="用例的描述"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="add_case()">提交</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tpl-block">
+                    <div class="am-g">
+                        <div class="am-u-sm-12 am-u-md-6">
+                            <div class="am-btn-toolbar">
+                                <div class="am-btn-group am-btn-group-xs">
+                                    <button type="button" class="am-btn am-btn-default am-btn-success" data-toggle="modal" data-target="#myModal"><span class="am-icon-plus"></span> 新增</button>
+{#                                    <button type="button" class="am-btn am-btn-default am-btn-danger"><span class="am-icon-trash-o"></span> 删除</button>#}
+                                </div>
+                            </div>
+                        </div>
+{#                        <div class="am-u-sm-12 am-u-md-3">#}
+{#                            <div class="am-form-group">#}
+{#                                <select data-am-selected="{btnSize: 'sm'}">#}
+{#                                    <option value="option1">所有类别</option>#}
+{#                                    <option value="option2">首页</option>#}
+{#                                    <option value="option3">抢单</option>#}
+{#                                    <option value="option4">跟单</option>#}
+{#                                    <option value="option5">我的</option>#}
+{#                                </select>#}
+{#                            </div>#}
+{#                        </div>#}
+                        <div class="am-u-sm-12 am-u-md-3">
+                            <div class="am-input-group am-input-group-sm">
+                                <input id="search_txt" type="text" class="am-form-field" placeholder="可模糊搜索用例名字">
+                                <span class="am-input-group-btn">
+                                    <button onclick="search_case()" class="am-btn am-btn-default am-btn-success tpl-am-btn-success am-icon-search" type="button"></button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="am-g">
+                        <div class="am-u-sm-12">
+                                <table id="case_list" class="am-table am-table-striped am-table-hover table-main">
+                                    <thead>
+                                        <tr>
+{#                                            <th class="table-check"><input name="chec" type="checkbox" class="tpl-table-fz-check"></th>#}
+                                            <th class="table-id">ID</th>
+                                            <th>用例名字</th>
+                                            <th>接口执行步骤</th>
+                                            <th>描述</th>
+                                            <th class="am-hide-sm-only">创建时间</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                                <div class="am-cf">
+
+                                    <div class="am-fr">
+                                        <ul class="am-pagination tpl-pagination">
+                                            <li class="am-disabled"><a href="#">«</a></li>
+                                            <li class="am-active"><a href="#">1</a></li>
+                                            <li><a href="#">2</a></li>
+                                            <li><a href="#">3</a></li>
+                                            <li><a href="#">4</a></li>
+                                            <li><a href="#">5</a></li>
+                                            <li><a href="#">»</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <hr>
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="tpl-alert"></div>
+            </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        $(function() {
+            get_case("");//初始化表格数据
+            $('#myModal').on('hide.bs.modal',function() {
+                document.getElementById("form_model").reset();
+            });
+            $('#myModal').on('show.bs.modal',function() {
+                document.getElementById("form_model").reset();
+            });
+        });
+
+        function add_case() {
+            var post_url = "{% url 'api:api_add_case' %}";
+            var post_data = {
+                "caseName": $("#inputName").val(),
+                "apiIds": $("#inputSetup").val(),
+                "caseDesc": $("#inputDesc").val()
+            };
+            postAction(post_url, post_data);
+        }
+
+        function search_case() {
+            var search_txt = $("#search_txt").val();
+            get_case(search_txt);
+        }
+
+        function get_case(search_txt) {
+            var post_url = "{% url 'api:api_get_case' %}";
+            var post_data = {"search_txt": search_txt};
+            postAction(post_url, post_data);
+        }
+
+        function postAction(post_url, post_data) {
+            $.ajax({
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                url: post_url,
+                data: JSON.stringify(post_data),
+                success: function (result) {
+                    console.log(result);
+                    if(result.status != 200){
+                        alert(result.message);
+                    }
+                    if (post_url != "{% url 'api:api_get_case' %}"){
+                        get_case("");
+                    }
+                    else{
+                        refreshData(result.datas);//刷新表格数据
+                    }
+                },
+                error : function() {
+                    alert("提交异常！");
+                }
+            });
+        }
+
+        function refreshData(data) {
+            $("#case_list tbody").html("");//清除老数据
+            var tableStr = "";
+            var len = data.length;
+            for (var i = 0; i < len; i++) {
+                tableStr = tableStr
+                        + '<tr><td>' + data[i].id + '</td>'
+                        + '<td>' + data[i].caseName + '</td>'
+                        + '<td>' + data[i].apiIds + '</td>'
+                        + '<td>' + data[i].caseDesc + '</td>'
+                        + '<td>' + data[i].createTime.replace(/T/g,' ').substr(0,19) + '</td>'
+                        + '<td><div class="am-btn-toolbar"><div class="am-btn-group am-btn-group-xs">'
+                        + '<button disabled="disabled" class="am-btn am-btn-default am-btn-xs am-text-secondary"><span class="am-icon-pencil-square-o"></span> 编辑</button>'
+                        + '<button onclick="delete_case('+ data[i].id +')" class="am-btn am-btn-default am-btn-xs am-text-danger am-hide-sm-only"><span class="am-icon-trash-o"></span> 删除</button>'
+                        + '</div></div></td></tr>';
+            }
+            $("#case_list tbody").html(tableStr);
+        }
+
+        function delete_case(case_id) {
+            var post_url = "{% url 'api:api_del_case' %}";
+            var post_data = {"case_id": case_id};
+            postAction(post_url, post_data);
+        }
+    </script>
+
+{% endblock %}

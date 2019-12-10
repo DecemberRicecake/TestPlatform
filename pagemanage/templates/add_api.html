@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+{% block title %}新增接口{% endblock %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="tpl-content-wrapper">
+        <div class="tpl-portlet-components">
+                <div class="portlet-title">
+                    <div class="caption font-green bold">
+                        <span>新增接口</span>
+                    </div>
+                </div>
+                <div class="tpl-block ">
+                    <div class="am-g tpl-amazeui-form">
+                        <div class="am-u-sm-12 am-u-md-9">
+                            <form id="form1" class="am-form am-form-horizontal">
+                                <div class="am-form-group">
+                                    <label for="apiName" class="am-u-sm-3 am-form-label">接口名字:</label>
+                                    <div class="am-u-sm-9">
+                                        <input type="text" id="apiName" placeholder="请输入接口名字" name="apiName">
+                                    </div>
+                                </div>
+                                <div class="am-form-group">
+                                    <label for="project" class="am-u-sm-3 am-form-label">所属项目:</label>
+                                    <div class="am-u-sm-9">
+                                        <select id="project" data-am-selected="{searchBox: 1}">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="am-form-group">
+                                    <label for="proxy" class="am-u-sm-3 am-form-label">代理:</label>
+                                    <div class="am-u-sm-9">
+                                        <select id="proxy" data-am-selected="{searchBox: 1}">
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="am-form-group">
+                                    <label for="apiUrl" class="am-u-sm-3 am-form-label">请求Url:</label>
+                                    <div class="am-u-sm-9">
+                                        <input type="text" id="apiUrl" placeholder="请输入Url" name="apiUrl">
+                                    </div>
+                                </div>
+
+                                <div class="am-form-group">
+                                    <label for="method" class="am-u-sm-3 am-form-label">请求方式:</label>
+                                    <div class="am-u-sm-9">
+                                        <select name="method" id="method" data-am-selected="{searchBox: 1}">
+                                            <option>POST</option>
+                                            <option>GET</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="am-form-group">
+                                    <label for="requestData" class="am-u-sm-3 am-form-label">请求入参:</label>
+                                    <div class="am-u-sm-9">
+                                        <textarea class="" rows="5" id="requestData" placeholder="请求入参只支持JSON类型" name="requestData"></textarea>
+                                        <small style="color:red;">①自定义参数格式${x}; ②上个接口提取的参数格式#{x[0]}</small>
+                                    </div>
+                                </div>
+                                <label for="validators" class="am-u-sm-3 am-form-label">结果校验:</label>
+                            </form>
+
+                            <form id="form2" class="am-form am-form-horizontal">
+                                <table class="add_table am-table table-main" id="validators">
+                                    <thead>
+                                        <tr>
+                                            <th width="35%">校验参数</th>
+                                            <th width="65%">预期值</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                 </table>
+                            </form>
+
+                            <div class="add_button am-btn-group am-btn-group-xs">
+                                <button type="button" onclick="addValidators()" class="am-btn am-btn-default am-btn-success"><span class="am-icon-plus" ></span> 新增</button>
+                            </div>
+                            <br />
+                            <br />
+                            <form id="form3" class="am-form am-form-horizontal">
+                                <div class="am-form-group">
+                                    <label for="extractFlag" class="am-u-sm-3 am-form-label">是否提取变量:</label>
+                                    <div class="am-u-sm-9">
+                                        <div class="tpl-switch">
+                                            <input id="extractFlag" name="extractFlag" type="checkbox" class="ios-switch bigswitch tpl-switch-btn" />
+                                            <div class="tpl-switch-btn-view">
+                                                <div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+
+                            <form id="form4" class="am-form am-form-horizontal">
+                                 <table class="add_table am-table table-main" id="extracts">
+                                     <thead>
+                                        <tr>
+                                            <th width="35%">引用名称</th>
+                                            <th width="65%">正则表达式</th>
+                                        </tr>
+                                     </thead>
+                                     <tbody>
+                                     </tbody>
+                                 </table>
+                            </form>
+
+                            <div class="add_button am-btn-group am-btn-group-xs">
+                                <button type="button" onclick="addExtracts()" class="am-btn am-btn-default am-btn-success"><span class="am-icon-plus" ></span> 新增</button>
+                            </div>
+                            <br />
+                            <br />
+                            <div class="am-form-group">
+                                    <div class="am-u-sm-9 am-u-sm-push-3">
+                                        <button type="button" onclick="add_api()" class="am-btn am-btn-primary tpl-btn-bg-color-success">创建接口</button>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        $(function(){
+            loadProject(); //加载项目数据
+            loadEnv();  //加载代理数据
+        });
+
+        function loadProject(){
+            var a_url = "/api/project/";
+            var a_type = "GET";
+            var a_data = {};
+            Action(a_url, a_data, a_type, function(result){
+                if(result){
+                    var project_sel=[];
+                    for(var i=0,len=result.length;i<len;i++){
+                        project_sel.push('<option value="'+result[i].id+'">'+result[i].projectName+'</option>');
+                    };
+                    $("#project").html(project_sel.join(' '));
+                };
+            });
+        }
+
+        function loadEnv(){
+            var a_url = "/api/environment/";
+            var a_type = "GET";
+            var a_data = {};
+            Action(a_url, a_data, a_type, function(result){
+                if(result){
+                    var proxy_sel=[];
+                    for(var i=0,len=result.length;i<len;i++){
+                        proxy_sel.push('<option value="'+result[i].id+'">'+result[i].Name+'</option>');
+                    };
+                    $("#proxy").html(proxy_sel.join(' '));
+                };
+            });
+        }
+
+        function Action(a_url, a_data, a_type, Func) {
+            $.ajax({
+                type: a_type,//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                contentType: 'application/json',
+                url: a_url,
+                data: a_data,
+                success: function (result) {
+                    console.log(result);
+                    Func(result);
+                },
+                error : function() {
+                    alert("提交异常！");
+                }
+            });
+        }
+
+        var erowscount = 0;
+        function addExtracts() {
+            erowscount += 1;
+            var tableStr = '<tr id="extracts'+ erowscount +'">'
+                + '<td><input type="text" name="extracts_key" id="extracts_key'+ erowscount +'" value="" /></td>'
+                + '<td><input type="text" name="extracts_value" id="extracts_value'+ erowscount +'" value="" /></td>'
+                + '<td><button type="button" onclick="removeExtracts('+ erowscount +')" class="am-btn">'
+                + '<span class="am-icon-trash-o"></span></button></td></tr>';
+            $("#extracts tbody").append(tableStr);
+        }
+
+        function removeExtracts(erowscount) {
+            var id = 'extracts' + erowscount;
+            $("#"+id).remove();
+        }
+
+        var vrowscount = 0;
+        function addValidators() {
+            vrowscount += 1;
+            var tableStr = '<tr id="validators'+ vrowscount +'">'
+                + '<td><input type="text" name="validators_key" id="validators_key'+ vrowscount +'" value="" /></td>'
+                + '<td><input type="text" name="validators_value" id="validators_value'+ vrowscount +'" value="" /></td>'
+                + '<td><button type="button" onclick="removeValidators('+ vrowscount +')" class="am-btn">'
+                + '<span class="am-icon-trash-o"></span></button></td></tr>';
+            $("#validators tbody").append(tableStr);
+        }
+
+        function removeValidators(vrowscount) {
+            var id = 'validators' + vrowscount;
+            $("#"+id).remove();
+        }
+
+        function panduan(v) {
+            var key_list = document.getElementsByName(v+"_key");
+            var value_list = document.getElementsByName(v+"_value");
+            var list_num = key_list.length;
+            var str = {};
+            if(list_num>0){
+                for(var i=0; i<list_num; i++) {
+                    if(key_list[i].value != "" && value_list[i].value != ""){
+                        str[key_list[i].value] = value_list[i].value;
+                    }
+                    else {
+                        return
+                    }
+
+                }
+            }
+            return str
+        }
+
+        function get_E_data() {             /*提取变量*/
+            return panduan("extracts");
+        }
+
+        function get_V_data() {             /*校验参数*/
+            return panduan("validators");
+        }
+
+        function add_api() {
+            var a_url = "/api/api/";
+            var a_type = "POST";
+            var V_data = get_V_data();
+            var E_data = get_E_data();
+            if (typeof(V_data) == "undefined"){
+                alert("校验参数单元格不能为空！");
+                return
+            }
+            else if(typeof(E_data) == "undefined"){
+                alert("提取参数单元格不能为空！");
+                return
+            }
+            else {
+                var post_data = {
+                    "apiName": $("#apiName").val(),
+                    "project": $("#project").val(),
+                    "env": $("#proxy").val(),
+                    "url": $("#apiUrl").val(),
+                    "method": $("#method").val(),
+                    "questData": $("#requestData").serializeJSON().requestData,
+                    "validators": JSON.stringify(V_data),
+                    "extractFlag": $("#extractFlag").prop("checked"),
+                    "extracts": JSON.stringify(E_data),
+                };
+                Action(a_url, JSON.stringify(post_data), a_type, function(){
+                window.location.href="/api_list/";
+                });
+            }
+        }
+
+    </script>
+{% endblock %}
+
+
